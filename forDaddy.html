@@ -282,29 +282,27 @@ background: rgba(255,255,255,0.55);
 
     function addConfettiBurst(count = 160) {
       const originX = window.innerWidth * (0.35 + Math.random() * 0.3);
-      const originY = window.innerHeight * (0.15 + Math.random() * 0.2);
-      for (let i = 0; i < count; i++) {
-        confetti.push({
-          x: originX,
-          y: originY,
-          vx: (Math.random() - 0.5) * 10,
-          vy: (Math.random() - 1.0) * 12,
-          size: 3 + Math.random() * 5,
-          rot: Math.random() * Math.PI,
-          vr: (Math.random() - 0.5) * 0.25,
-          life: 60 + Math.random() * 80,
-          color: hsl(${Math.floor(Math.random()*360)}, 85%, 60%)
-        });
-      }
-      if (!confettiRunning) {
-        confettiRunning = true;
-        requestAnimationFrame(tickConfetti);
-      }
-    }
+const originY = window.innerHeight * (0.15 + Math.random() * 0.2);
+for (let i = 0; i < count; i++) {
+  confetti.push({
+    x: originX,
+    y: originY,
+    vx: (Math.random() - 0.5) * 10,
+    vy: (Math.random() - 1.0) * 12,
+    size: 3 + Math.random() * 5,
+    rot: Math.random() * Math.PI,
+    vr: (Math.random() - 0.5) * 0.25,
+    life: 60 + Math.random() * 80,
+    color: hsl(${Math.floor(Math.random() * 360)}, 85%, 60%)
+  });
+}
+if (!confettiRunning) {
+  confettiRunning = true;
+  requestAnimationFrame(tickConfetti);
+}
 
     function tickConfetti() {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       for (let i = confetti.length - 1; i >= 0; i--) {
         const p = confetti[i];
         p.vy += 0.22;
@@ -476,6 +474,7 @@ document.addEventListener(
   </script>
 </body>
 </html>
+
 
 
 
