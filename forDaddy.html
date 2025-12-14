@@ -230,162 +230,21 @@ background: rgba(255,255,255,0.55);
 
   <audio id="music" src="./donyaye-varoone.mp3" preload="auto"></audio>
 
-  <script>
-/* ================= Floating hearts & balloons ================= */
-const floatLayer = document.getElementById("floatLayer");
-const icons = ["❤️","💖","💗","🎈","🎀","💞","💝"];
-
-function spawnFloat() {
-  const el = document.createElement("div");
-  el.className = "float";
-  el.textContent = icons[Math.floor(Math.random() * icons.length)];
-
-  const size = 18 + Math.random() * 26;
-  const x = Math.random() * 100;
-  const dur = 7 + Math.random() * 7;
-  const delay = Math.random() * 0.8;
-  const rot = (-18 + Math.random() * 36);
-  const sway = (Math.random() < 0.5 ? -1 : 1) * (10 + Math.random() * 24);
-  const swayDur = 2.6 + Math.random() * 2.6;
-
-  el.style.left = x + "vw";
-  el.style.fontSize = size + "px";
-  el.style.setProperty("--dur", dur + "s");
-  el.style.setProperty("--delay", delay + "s");
-  el.style.setProperty("--rot", rot + "deg");
-  el.style.setProperty("--sway", sway + "px");
-  el.style.setProperty("--swayDur", swayDur + "s");
-
-  floatLayer.appendChild(el);
-  setTimeout(() => el.remove(), (dur + delay + 0.3) * 1000);
-}
-
-const isMobile = window.matchMedia("(max-width: 520px)").matches;
-setInterval(spawnFloat, isMobile ? 180 : 140);
-for (let i = 0; i < 18; i++) setTimeout(spawnFloat, i * 60);
-
-/* ================= Confetti ================= */
-    function tickConfetti() {
-  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-  for (let i = confetti.length - 1; i >= 0; i--) {
-    const p = confetti[i];   
-
-    p.vy += 0.22;
-    p.vx *= 0.99;
-    p.vy *= 0.99;
-
-    p.x += p.vx;
-    p.y += p.vy;
-    p.rot += p.vr;
-
-    p.life--;
-
-    ctx.save();
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle = p.color;
-    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 1.4);
-    ctx.restore();
-
-    if (p.life <= 0 || p.y > window.innerHeight + 80) {
-      confetti.splice(i, 1);
-    }
-
-  if (confetti.length > 0) {
-    requestAnimationFrame(tickConfetti);
-  } else {
-    confettiRunning = false;
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-  }
-
-setTimeout(() => addConfettiBurst(isMobile ? 110 : 150), 450);
-
-/* ================= Helpers ================= */
+<script>
 const msg = document.getElementById("msg");
-
-function escapeHtml(str) {
-  return str
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-function highlightPhrases(text) {
-  const phrases = [
-    "خفن‌ترین آدمی",
-    "کلی دوستتون دارم",
-    "دلیلی هستین که باعث میشه",
-    "تولدتــون مبارک بابایی قشنگ من"
-  ];
-
-  let html = "";
-  let i = 0;
-
-  while (i < text.length) {
-    let found = null;
-    let index = -1;
-
-    for (const p of phrases) {
-      const idx = text.indexOf(p, i);
-      if (idx !== -1 && (index === -1 || idx < index)) {
-        index = idx;
-        found = p;
-      }
-    }
-
-    if (index === -1) {
-      html += escapeHtml(text.slice(i));
-      break;
-    }
-
-    html += escapeHtml(text.slice(i, index));
-    html += `<span class="pulse">${escapeHtml(found)}</span>`;
-    i = index + found.length;
-  }
-
-  return html.replaceAll("\n\n","<br><br>").replaceAll("\n","<br>");
-}
-
-let typingTimer = null;
-function typeMessage(text, speed = 22) {
-  if (typingTimer) clearInterval(typingTimer);
-  msg.innerHTML = "";
-
-  let i = 0;
-  return new Promise(resolve => {
-    typingTimer = setInterval(() => {
-      i++;
-      msg.innerHTML = escapeHtml(text.slice(0,i))
-        .replaceAll("\n\n","<br><br>")
-        .replaceAll("\n","<br>");
-
-      if (i >= text.length) {
-        clearInterval(typingTimer);
-        msg.innerHTML = highlightPhrases(text);
-        resolve();
-      }
-    }, speed);
-  });
-}
-
-/* ================= Music ================= */
 const music = document.getElementById("music");
+
 let musicPlayed = false;
 
 async function playMusicOnce() {
   if (musicPlayed) return;
   try {
-    music.volume = 0.85;
     await music.play();
     musicPlayed = true;
     document.body.classList.add("night");
-  } catch(e) {}
+  } catch (e) {}
 }
 
-/* ================= Message ================= */
 function showLoveMessage() {
   return "آقای پویای دوست‌داشتنی من،\n\n" +
     "شما خفن‌ترین آدمی هستین که به‌نظرم توی کل دنیا وجود داره و من کلی دوستتون دارم ❤️\n\n" +
@@ -394,26 +253,32 @@ function showLoveMessage() {
     "تولدتــون مبارک بابایی قشنگ من ❤️🎂";
 }
 
-/* ================= Buttons ================= */
+function typeMessage(text) {
+  msg.innerHTML = "";
+  let i = 0;
+  const timer = setInterval(() => {
+    msg.innerHTML = text.slice(0, i).replaceAll("\n", "<br>");
+    i++;
+    if (i > text.length) clearInterval(timer);
+  }, 30);
+}
+
 document.getElementById("btn1").addEventListener("click", async () => {
-  addConfettiBurst(isMobile ? 180 : 260);
   await playMusicOnce();
-  await typeMessage(showLoveMessage(), isMobile ? 24 : 18);
+  typeMessage(showLoveMessage());
 });
 
-document.getElementById("btn2").addEventListener("click", async () => {
-  addConfettiBurst(isMobile ? 120 : 170);
-  await typeMessage("قلمبه 😌✨", 26);
+document.getElementById("btn2").addEventListener("click", () => {
+  msg.innerHTML = "قلمبه 😌✨";
 });
 
-/* Unlock audio on first interaction */
 document.addEventListener("pointerdown", () => {
   if (!musicPlayed) playMusicOnce();
 }, { once: true });
-    
-  </script>
+</script>
 </body>
 </html>
+
 
 
 
