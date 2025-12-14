@@ -378,7 +378,7 @@ if (!confettiRunning) {
         }
 
         html += escapeHtml(rawText.slice(i, matchIndex));
-        html += <span class="pulse">${escapeHtml(match)}</span>;
+        html += '<span class="pulse">${escapeHtml(match)}</span>';
         i = matchIndex + match.length;
       }
 
@@ -474,6 +474,7 @@ document.addEventListener(
   </script>
 </body>
 </html>
+
 
 
 
