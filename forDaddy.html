@@ -463,16 +463,18 @@ document.getElementById("btn2").addEventListener("click", async () => {
   await typeMessage("قلمبه 😌✨", { speed: 26 });
 });
 
-document.addEventListener(
-  "pointerdown",
-  () => {
-    if (!musicPlayed) playMusicOnce();
-  },
-  { once: true }
-);
-  </script>
+<script>
+  document.addEventListener(
+    "pointerdown",
+    () => {
+      if (!musicPlayed) playMusicOnce();
+    },
+    { once: true }
+  );
+</script>
 </body>
 </html>
+
 
 
 
