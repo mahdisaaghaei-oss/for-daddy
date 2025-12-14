@@ -229,197 +229,137 @@ background: rgba(255,255,255,0.55);
   </div>
 
   <audio id="music" src="./donyaye-varoone.mp3" preload="auto"></audio>
+
   <script>
-    // ---------------- Floating hearts & balloons (more + smoother) ----------------
-    const floatLayer = document.getElementById("floatLayer");
-    const icons = ["❤️","💖","💗","🎈","🎀","💞","💝"];
+/* ================= Floating hearts & balloons ================= */
+const floatLayer = document.getElementById("floatLayer");
+const icons = ["❤️","💖","💗","🎈","🎀","💞","💝"];
 
-    function spawnFloat() {
-      const el = document.createElement("div");
-      el.className = "float";
-      el.textContent = icons[Math.floor(Math.random() * icons.length)];
+function spawnFloat() {
+  const el = document.createElement("div");
+  el.className = "float";
+  el.textContent = icons[Math.floor(Math.random() * icons.length)];
 
-      const size = 18 + Math.random() * 26;          // 18..44px
-      const x = Math.random() * 100;                 // vw
-      const dur = 7 + Math.random() * 7;             // 7..14s
-      const delay = Math.random() * 0.8;             // 0..0.8s
-      const rot = (-18 + Math.random() * 36);        // -18..18deg
-      const sway = (Math.random() < 0.5 ? -1 : 1) * (10 + Math.random() * 24); // px
-      const swayDur = 2.6 + Math.random() * 2.6;     // 2.6..5.2s
+  const size = 18 + Math.random() * 26;
+  const x = Math.random() * 100;
+  const dur = 7 + Math.random() * 7;
+  const delay = Math.random() * 0.8;
+  const rot = (-18 + Math.random() * 36);
+  const sway = (Math.random() < 0.5 ? -1 : 1) * (10 + Math.random() * 24);
+  const swayDur = 2.6 + Math.random() * 2.6;
 
-      el.style.left = x + "vw";
-      el.style.fontSize = size + "px";
-      el.style.setProperty("--x", "0px");
-      el.style.setProperty("--dur", dur + "s");
-      el.style.setProperty("--delay", delay + "s");
-      el.style.setProperty("--rot", rot + "deg");
-      el.style.setProperty("--sway", sway + "px");
-      el.style.setProperty("--swayDur", swayDur + "s");
+  el.style.left = x + "vw";
+  el.style.fontSize = size + "px";
+  el.style.setProperty("--dur", dur + "s");
+  el.style.setProperty("--delay", delay + "s");
+  el.style.setProperty("--rot", rot + "deg");
+  el.style.setProperty("--sway", sway + "px");
+  el.style.setProperty("--swayDur", swayDur + "s");
 
-      floatLayer.appendChild(el);
-      setTimeout(() => el.remove(), (dur + delay + 0.2) * 1000);
+  floatLayer.appendChild(el);
+  setTimeout(() => el.remove(), (dur + delay + 0.3) * 1000);
+}
+
+const isMobile = window.matchMedia("(max-width: 520px)").matches;
+setInterval(spawnFloat, isMobile ? 180 : 140);
+for (let i = 0; i < 18; i++) setTimeout(spawnFloat, i * 60);
+
+/* ================= Confetti ================= */
+    p.life--;
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size * 1.4);
+    ctx.restore();
+
+    if (p.life <= 0 || p.y > window.innerHeight + 80) {
+      confetti.splice(i, 1);
+    }
+  }
+
+  if (confetti.length > 0) {
+    requestAnimationFrame(tickConfetti);
+  } else {
+    confettiRunning = false;
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  }
+}
+
+setTimeout(() => addConfettiBurst(isMobile ? 110 : 150), 450);
+
+/* ================= Helpers ================= */
+const msg = document.getElementById("msg");
+
+function escapeHtml(str) {
+  return str
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function highlightPhrases(text) {
+  const phrases = [
+    "خفن‌ترین آدمی",
+    "کلی دوستتون دارم",
+    "دلیلی هستین که باعث میشه",
+    "تولدتــون مبارک بابایی قشنگ من"
+  ];
+
+  let html = "";
+  let i = 0;
+
+  while (i < text.length) {
+    let found = null;
+    let index = -1;
+
+    for (const p of phrases) {
+      const idx = text.indexOf(p, i);
+      if (idx !== -1 && (index === -1 || idx < index)) {
+        index = idx;
+        found = p;
+      }
     }
 
-    const isMobile = window.matchMedia("(max-width: 520px)").matches;
-    const intervalMs = isMobile ? 180 : 140;
-    setInterval(spawnFloat, intervalMs);
-    for (let i=0;i<18;i++) setTimeout(spawnFloat, i*60);
-// ---------------- Confetti (canvas) ----------------
-    const canvas = document.getElementById("confetti");
-    const ctx = canvas.getContext("2d");
-    function resize() {
-      canvas.width = window.innerWidth * devicePixelRatio;
-      canvas.height = window.innerHeight * devicePixelRatio;
-      canvas.style.width = window.innerWidth + "px";
-      canvas.style.height = window.innerHeight + "px";
-      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    if (index === -1) {
+      html += escapeHtml(text.slice(i));
+      break;
     }
-    window.addEventListener("resize", resize);
-    resize();
 
-    const confetti = [];
-    let confettiRunning = false;
+    html += escapeHtml(text.slice(i, index));
+    html += `<span class="pulse">${escapeHtml(found)}</span>`;
+    i = index + found.length;
+  }
 
-    function addConfettiBurst(count = 160) {
-      const originX = window.innerWidth * (0.35 + Math.random() * 0.3);
-const originY = window.innerHeight * (0.15 + Math.random() * 0.2);
-for (let i = 0; i < count; i++) {
-  confetti.push({
-    x: originX,
-    y: originY,
-    vx: (Math.random() - 0.5) * 10,
-    vy: (Math.random() - 1.0) * 12,
-    size: 3 + Math.random() * 5,
-    rot: Math.random() * Math.PI,
-    vr: (Math.random() - 0.5) * 0.25,
-    life: 60 + Math.random() * 80,
-    color: 'hsl(${Math.floor(Math.random() * 360)}, 85%, 60%)'
+  return html.replaceAll("\n\n","<br><br>").replaceAll("\n","<br>");
+}
+
+let typingTimer = null;
+function typeMessage(text, speed = 22) {
+  if (typingTimer) clearInterval(typingTimer);
+  msg.innerHTML = "";
+
+  let i = 0;
+  return new Promise(resolve => {
+    typingTimer = setInterval(() => {
+      i++;
+      msg.innerHTML = escapeHtml(text.slice(0,i))
+        .replaceAll("\n\n","<br><br>")
+        .replaceAll("\n","<br>");
+
+      if (i >= text.length) {
+        clearInterval(typingTimer);
+        msg.innerHTML = highlightPhrases(text);
+        resolve();
+      }
+    }, speed);
   });
 }
-if (!confettiRunning) {
-  confettiRunning = true;
-  requestAnimationFrame(tickConfetti);
-}
 
-    function tickConfetti() {
-  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      for (let i = confetti.length - 1; i >= 0; i--) {
-        const p = confetti[i];
-        p.vy += 0.22;
-        p.vx *= 0.99;
-        p.vy *= 0.99;
-
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rot += p.vr;
-        p.life -= 1;
-
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*1.4);
-        ctx.restore();
-
-        if (p.life <= 0 || p.y > window.innerHeight + 80) {
-          confetti.splice(i, 1);
-        }
-      }
-
-      if (confetti.length > 0) requestAnimationFrame(tickConfetti);
-      else {
-        confettiRunning = false;
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      }
-    }
-
-    setTimeout(() => addConfettiBurst(isMobile ? 110 : 150), 450);
-
-    // ---------------- Helpers: typing + highlight ----------------
-    const msg = document.getElementById("msg");
-
-    function escapeHtml(str){
-      return str
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    // Wrap target phrases with <span class="pulse"> ... </span>
-    function highlightPhrases(rawText){
-      const phrases = [
-        "خفن‌ترین آدمی",
-        "کلی دوستتون دارم",
-        "دلیلی هستین که باعث میشه",
-        "تولدتــون مبارک بابایی قشنگ من"
-      ];
-
-      // Build HTML safely by splitting on phrases
-      let html = "";
-      let i = 0;
-
-      while (i < rawText.length) {
-        let match = null;
-        let matchIndex = -1;
-
-        for (const p of phrases) {
-          const idx = rawText.indexOf(p, i);
-          if (idx !== -1 && (matchIndex === -1 || idx < matchIndex)) {
-            matchIndex = idx;
-            match = p;
-          }
-        }
-
-        if (matchIndex === -1) {
-          html += escapeHtml(rawText.slice(i));
-          break;
-        }
-
-        html += escapeHtml(rawText.slice(i, matchIndex));
-        html += '<span class="pulse">${escapeHtml(match)}</span>';
-        i = matchIndex + match.length;
-      }
-
-      // Paragraph breaks
-      html = html.replaceAll("\n\n", "<br><br>").replaceAll("\n", "<br>");
-      return html;
-    }
-
-    let typingTimer = null;
-    async function typeMessage(finalText, { speed = 22 } = {}) {
-      // stop previous typing
-      if (typingTimer) {
-        clearInterval(typingTimer);
-        typingTimer = null;
-      }
-
-      msg.innerHTML = "";
-      msg.scrollTop = 0;
-
-      let shown = "";
-      let idx = 0;
-return new Promise((resolve) => {
-        typingTimer = setInterval(() => {
-          idx++;
-          shown = finalText.slice(0, idx);
-          // During typing use plain text + line breaks (safe)
-          msg.innerHTML = escapeHtml(shown).replaceAll("\n\n", "<br><br>").replaceAll("\n", "<br>");
-
-          if (idx >= finalText.length) {
-            clearInterval(typingTimer);
-            typingTimer = null;
-            // After typing, apply highlight pulses
-            msg.innerHTML = highlightPhrases(finalText);
-            resolve();
-          }
-        }, speed);
-      });
-    }
-
-   <script>
-// ---------------- Music + Night Mode ----------------
+/* ================= Music ================= */
 const music = document.getElementById("music");
 let musicPlayed = false;
 
@@ -430,12 +370,10 @@ async function playMusicOnce() {
     await music.play();
     musicPlayed = true;
     document.body.classList.add("night");
-  } catch (e) {
-    // mobile browsers may require extra tap
-  }
+  } catch(e) {}
 }
 
-// ---------------- Message ----------------
+/* ================= Message ================= */
 function showLoveMessage() {
   return "آقای پویای دوست‌داشتنی من،\n\n" +
     "شما خفن‌ترین آدمی هستین که به‌نظرم توی کل دنیا وجود داره و من کلی دوستتون دارم ❤️\n\n" +
@@ -444,29 +382,26 @@ function showLoveMessage() {
     "تولدتــون مبارک بابایی قشنگ من ❤️🎂";
 }
 
-// ---------------- Buttons ----------------
+/* ================= Buttons ================= */
 document.getElementById("btn1").addEventListener("click", async () => {
   addConfettiBurst(isMobile ? 180 : 260);
   await playMusicOnce();
-  await typeMessage(showLoveMessage(), { speed: isMobile ? 24 : 18 });
+  await typeMessage(showLoveMessage(), isMobile ? 24 : 18);
 });
 
 document.getElementById("btn2").addEventListener("click", async () => {
   addConfettiBurst(isMobile ? 120 : 170);
-  await typeMessage("قلمبه 😌✨", { speed: 26 });
+  await typeMessage("قلمبه 😌✨", 26);
 });
 
-// Unlock audio on first interaction (mobile)
-document.addEventListener(
-  "pointerdown",
-  () => {
-    if (!musicPlayed) playMusicOnce();
-  },
-  { once: true }
-);
+/* Unlock audio on first interaction */
+document.addEventListener("pointerdown", () => {
+  if (!musicPlayed) playMusicOnce();
+}, { once: true });
 </script>
 </body>
 </html>
+
 
 
 
