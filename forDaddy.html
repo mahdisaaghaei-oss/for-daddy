@@ -211,13 +211,13 @@ background: rgba(255,255,255,0.55);
 
     /* 🎈 Balloons (only on button click) */
 .balloon{
-  position: fixed;
+  position: absolute;
   bottom: -120px;
   font-size: 34px;
   pointer-events: none;
   opacity: 0.95;
   animation: balloonRise linear forwards;
-  z-index: 5;
+  z-index: 10;
 }
 
 @keyframes balloonRise {
@@ -464,9 +464,11 @@ function showLoveMessage() {
 
 /* ====== Buttons ====== */
 document.getElementById("btn1").addEventListener("click", async () => {
-  addConfettiBurst(isMobile ? 180 : 260);
-  await playMusicOnce();
+  addConfettiBurst(isMobile ? 180 : 260); // 🎊
+  startBalloons();                        // 🎈
+  await playMusicOnce();                  // 🎵
   await typeMessage(showLoveMessage(), isMobile ? 24 : 18);
+  stopBalloons();                         // ⛔
 });
 
 document.getElementById("btn2").addEventListener("click", async () => {
@@ -485,6 +487,7 @@ document.addEventListener(
 </script>
 </body>
 </html>
+
 
 
 
