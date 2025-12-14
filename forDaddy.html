@@ -277,7 +277,6 @@ for (let i = 0; i < 18; i++) setTimeout(spawnFloat, i * 60);
     if (p.life <= 0 || p.y > window.innerHeight + 80) {
       confetti.splice(i, 1);
     }
-  }
 
   if (confetti.length > 0) {
     requestAnimationFrame(tickConfetti);
@@ -401,6 +400,7 @@ document.addEventListener("pointerdown", () => {
 </script>
 </body>
 </html>
+
 
 
 
