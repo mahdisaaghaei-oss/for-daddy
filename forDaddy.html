@@ -265,6 +265,20 @@ setInterval(spawnFloat, isMobile ? 180 : 140);
 for (let i = 0; i < 18; i++) setTimeout(spawnFloat, i * 60);
 
 /* ================= Confetti ================= */
+    function tickConfetti() {
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+  for (let i = confetti.length - 1; i >= 0; i--) {
+    const p = confetti[i];   
+
+    p.vy += 0.22;
+    p.vx *= 0.99;
+    p.vy *= 0.99;
+
+    p.x += p.vx;
+    p.y += p.vy;
+    p.rot += p.vr;
+
     p.life--;
 
     ctx.save();
@@ -399,6 +413,7 @@ document.addEventListener("pointerdown", () => {
 </script>
 </body>
 </html>
+
 
 
 
