@@ -418,32 +418,24 @@ return new Promise((resolve) => {
       });
     }
 
-    // ---------------- Music + Night Mode ----------------
-    const music = document.getElementById("music");
-    let musicPlayed = false;
+   <script>
+// ---------------- Music + Night Mode ----------------
+const music = document.getElementById("music");
+let musicPlayed = false;
 
-    async function playMusicOnce() {
-      if (musicPlayed) return;
-      try {
-        music.volume = 0.85;
-        await music.play();
-        musicPlayed = true;
-
-        // Night mode only when music actually starts
-        document.body.classList.add("night");
-      } catch (e) {
-        // some browsers require extra tap; ignore
-      }
-    }
-
-    function showLoveMessage() {
-  return "آقای پویای دوست‌داشتنی من،\n\n" +
-  "شما خفن‌ترین آدمی هستین که به‌نظرم توی کل دنیا وجود داره و من کلی دوستتون دارم ❤️\n\n" +
-  "شما دلیلی هستین که باعث میشه شب‌ها بتونم آروم بخوابم و صبح‌ها با خوشحالی از شنیدن صدای شما بیدار بشم.\n\n" +
-  "دوست دارم کلی چیزای قشنگ رو کنار همدیگه تجربه کنیم و امیدوارم بتونم کلیییی انرژی به شما بدم و حال دلتون رو عالی نگه دارم ✨\n\n" +
-  "تولدتــون مبارک بابایی قشنگ من ❤️🎂";
+async function playMusicOnce() {
+  if (musicPlayed) return;
+  try {
+    music.volume = 0.85;
+    await music.play();
+    musicPlayed = true;
+    document.body.classList.add("night");
+  } catch (e) {
+    // mobile browsers may require extra tap
+  }
 }
-// ---------------- Buttons ----------------
+
+// ---------------- Message ----------------
 function showLoveMessage() {
   return "آقای پویای دوست‌داشتنی من،\n\n" +
     "شما خفن‌ترین آدمی هستین که به‌نظرم توی کل دنیا وجود داره و من کلی دوستتون دارم ❤️\n\n" +
@@ -452,6 +444,7 @@ function showLoveMessage() {
     "تولدتــون مبارک بابایی قشنگ من ❤️🎂";
 }
 
+// ---------------- Buttons ----------------
 document.getElementById("btn1").addEventListener("click", async () => {
   addConfettiBurst(isMobile ? 180 : 260);
   await playMusicOnce();
@@ -463,16 +456,18 @@ document.getElementById("btn2").addEventListener("click", async () => {
   await typeMessage("قلمبه 😌✨", { speed: 26 });
 });
 
-  document.addEventListener(
-    "pointerdown",
-    () => {
-      if (!musicPlayed) playMusicOnce();
-    },
-    { once: true }
-  );
+// Unlock audio on first interaction (mobile)
+document.addEventListener(
+  "pointerdown",
+  () => {
+    if (!musicPlayed) playMusicOnce();
+  },
+  { once: true }
+);
 </script>
 </body>
 </html>
+
 
 
 
