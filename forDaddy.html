@@ -446,7 +446,6 @@ return new Promise((resolve) => {
   "تولدتــون مبارک بابایی قشنگ من ❤️🎂";
 }
 // ---------------- Buttons ----------------
-// ---------------- Buttons ----------------
 function showLoveMessage() {
   return "آقای پویای دوست‌داشتنی من،\n\n" +
     "شما خفن‌ترین آدمی هستین که به‌نظرم توی کل دنیا وجود داره و من کلی دوستتون دارم ❤️\n\n" +
@@ -466,7 +465,6 @@ document.getElementById("btn2").addEventListener("click", async () => {
   await typeMessage("قلمبه 😌✨", { speed: 26 });
 });
 
-// Try to unlock audio on first interaction (mobile browsers)
 document.addEventListener(
   "pointerdown",
   () => {
@@ -474,8 +472,10 @@ document.addEventListener(
   },
   { once: true }
 );
+);
   </script>
 </body>
 </html>
+
 
 
